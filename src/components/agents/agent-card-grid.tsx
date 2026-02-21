@@ -89,10 +89,10 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
             </p>
           </div>
 
-          <button className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[#4e1c85]/30 bg-[#4e1c85]/5 px-4 text-[12px] font-semibold text-[#4e1c85] transition-all duration-150 hover:bg-[#4e1c85]/10 hover:border-[#4e1c85]/50">
+          {/* <button className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-[#4e1c85]/30 bg-[#4e1c85]/5 px-4 text-[12px] font-semibold text-[#4e1c85] transition-all duration-150 hover:bg-[#4e1c85]/10 hover:border-[#4e1c85]/50">
             <Settings className="h-3.5 w-3.5" />
             Manage
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

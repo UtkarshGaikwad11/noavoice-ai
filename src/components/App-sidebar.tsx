@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation"
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -67,6 +68,13 @@ export function AppSidebar() {
  const pathname = usePathname();
  const { state } = useSidebar(); // "expanded" | "collapsed"
 
+
+ //Logout function
+ function handlelogout(){
+   localStorage.removeItem("token") //remove auth token
+   window.location.href = "/login"; 
+ }
+
  return (
   <Sidebar
    collapsible="icon"
@@ -79,7 +87,8 @@ export function AppSidebar() {
    }
   >
    {/* TOP WHITE HEADER (like screenshot) */}
-   <SidebarHeader className="bg-white px-4 py-4">
+   <SidebarHeader className="
+    px-4 py-4">
     <div className="flex items-center gap-3">
      {/* Hamburger / collapse */}
      <SidebarTrigger className="h-9 w-9 rounded-xl hover:bg-muted" />
@@ -160,6 +169,7 @@ export function AppSidebar() {
      <SidebarFooter className="bg-transparent p-0">
       <Button
        variant="ghost"
+       onClick={handlelogout}
        className="h-12 w-full justify-start gap-3 rounded-2xl px-4 text-white/90 hover:text-white hover:bg-white/10"
       >
        <LogOut className="h-5 w-5" />
