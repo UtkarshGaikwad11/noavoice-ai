@@ -5,6 +5,7 @@ import type { Agent } from "@/components/agents/agents-page";
 
 import { cn } from "@/lib/utils";
 import { Phone, Settings } from "lucide-react";
+import Link from "next/link";
 
 function StatusPill({ status }: { status: Agent["status"] }) {
   const active = status === "active";
@@ -30,6 +31,7 @@ function StatusPill({ status }: { status: Agent["status"] }) {
 
 export function AgentCardGrid({ agent }: { agent: Agent }) {
   return (
+    <Link href={`/agents/${agent.id}`} className="block">
     <div className="transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-xl">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
         {/* Header */}
@@ -96,5 +98,6 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }

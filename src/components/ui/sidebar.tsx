@@ -262,15 +262,15 @@ function SidebarTrigger({
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      size="icon-sm"
-      className={cn(className)}
+      size="icon-lg"
+      className={cn(className, "cursor-pointer")}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeftIcon className="cn-rtl-flip" />
+      <PanelLeftIcon className="cn-rtl-flip w-8 h-8 cursor-pointer" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -384,7 +384,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-group"
       data-sidebar="group"
       className={cn(
-        "p-2 relative flex w-full min-w-0 flex-col",
+        "relative flex w-full min-w-0 flex-col",
         className
       )}
       {...props}
