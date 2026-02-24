@@ -83,13 +83,13 @@ function PageHeader({ agentName }: { agentName: string }) {
           {agentName}
         </Button>
 
-        <Button
+        {/* <Button
           className="h-11 rounded-xl"
           style={{ background: THEME.primary }}
         >
           <Save className="mr-2 h-4 w-4" />
           Publish
-        </Button>
+        </Button> */}
 
         <Button variant="destructive" className="h-11 rounded-xl">
           <Trash2 className="mr-2 h-4 w-4" />
@@ -163,7 +163,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
         {/* Agent header inside card */}
         <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-sm">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br bg-purple-900 text-white shadow-sm">
               <Bot className="h-7 w-7" />
             </div>
             <div>

@@ -66,19 +66,12 @@ export function LoginForm({
             Login
           </Button>
         </Field>
-
-        <FieldSeparator>
+        {/* <FieldSeparator>
           Or continue with
-        </FieldSeparator>
+        </FieldSeparator> */}
 
         <Field>
-          <Button
-            variant="outline"
-            type="button"
-            className="w-full"
-          >
-            Login with GitHub
-          </Button>
+          
 
           <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}

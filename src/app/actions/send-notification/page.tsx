@@ -4,7 +4,7 @@ import { Bell, Plus, Pencil, Trash2 } from "lucide-react"
 
 export default function SendNotificationPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br p-8">
 
       {/* Header */}
       <div className="flex justify-between items-start mb-10">

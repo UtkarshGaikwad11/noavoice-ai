@@ -12,7 +12,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+
   const isLoginPage = pathname === "/login";
+
   return (
     <html lang="en">
       <body>
@@ -20,9 +22,13 @@ export default function RootLayout({
           {isLoginPage ? (
             children
           ) : (
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>{children}</SidebarInset>
+            <SidebarProvider defaultOpen={true}>
+              <div className="flex w-full">
+                <AppSidebar />
+                <SidebarInset className="flex-1">
+                  {children}
+                </SidebarInset>
+              </div>
             </SidebarProvider>
           )}
         </TooltipProvider>

@@ -42,12 +42,12 @@ export function AgentCardList({ agent }: { agent: Agent }) {
         {/* left */}
         <div className="flex items-start gap-5">
           <div className="relative">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-sm">
+            {/* <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-sm">
               <Bot className="h-7 w-7" />
-            </div>
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 ring-4 ring-white">
+            </div> */}
+            {/* <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 ring-4 ring-white">
               <Activity className="h-3 w-3 text-white" />
-            </span>
+            </span> */}
           </div>
 
           <div className="min-w-0">
@@ -88,13 +88,13 @@ export function AgentCardList({ agent }: { agent: Agent }) {
             <Phone className="h-5 w-5" />
           </Button>
 
-          <Button
+          {/* <Button
             variant="outline"
             className="h-12 rounded-full border-emerald-500/60 px-5 text-emerald-700 hover:bg-emerald-50"
           >
             <Settings className="mr-2 h-4 w-4" />
             Manage
-          </Button>
+          </Button> */}
         </div>
       </div>
     </Card>

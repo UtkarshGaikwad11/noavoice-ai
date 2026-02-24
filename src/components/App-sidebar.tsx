@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutConfirm } from "@/components/logout-confirm"
 
 import {
   Sidebar,
@@ -69,11 +70,6 @@ export function AppSidebar() {
   const { state } = useSidebar(); // "expanded" | "collapsed"
 
 
-  //Logout function
-  function handlelogout() {
-    localStorage.removeItem("token") //remove auth token
-    window.location.href = "/login";
-  }
 
   return (
     <Sidebar
@@ -86,7 +82,7 @@ export function AppSidebar() {
         } as React.CSSProperties
       }
     >
-      {/* TOP WHITE HEADER (like screenshot) */}
+      {/* TOP WHITE HEADER */}
       <SidebarHeader
         className={`py-4 ${state === "collapsed"
           ? "px-0 flex items-center justify-center"
@@ -118,7 +114,7 @@ export function AppSidebar() {
                 (state === "collapsed" ? "w-0 opacity-0" : "w-auto opacity-100")
               }
             >
-              <div className="truncate text-base font-semibold text-[#2b1246]">
+              <div className="truncate text-base font-bold text-[#2b1246]">
                 NoaVoice AI
               </div>
               <div className="truncate text-xs text-muted-foreground">
@@ -178,29 +174,14 @@ export function AppSidebar() {
           <Separator className="my-4 bg-white/10" />
 
           <SidebarFooter className="bg-transparent p-0 mt-auto">
-            <Button
-              variant="ghost"
-              onClick={handlelogout}
-              className={`h-12 w-full rounded-2xl text-white/90 hover:text-white hover:bg-white/10 ${state === "collapsed"
-                ? "justify-center px-0"
-                : "justify-start gap-4 px-4"
-                }`}
-            >
-              <LogOut className="h-5 w-5" />
-
-              <span
-                className={`font-medium transition-all duration-200 ${state === "collapsed" ? "opacity-0 w-0" : "opacity-100 w-auto"
-                  }`}
-              >
-                Logout
-              </span>
-            </Button>
-          </SidebarFooter>
+  <LogoutConfirm collapsed={state === "collapsed"} />
+</SidebarFooter>
         </div>
       </div>
 
       {/* Rail */}
       {/* <SidebarRail className="bg-transparent" /> */}
     </Sidebar>
+    
   );
 }

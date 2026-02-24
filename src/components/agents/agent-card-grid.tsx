@@ -15,7 +15,7 @@ function StatusPill({ status }: { status: Agent["status"] }) {
         "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase",
         active
           ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
-          : "bg-gray-100 text-gray-400 ring-1 ring-gray-200"
+          : "bg-gray-100  text-gray-400 ring-1 ring-gray-200"
       )}
     >
       <span
@@ -38,7 +38,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="truncate text-[15px] font-bold leading-tight text-gray-900">
+              <h3 className="truncate text-[20px] font-bold leading-tight text-gray-900">
                 {agent.name}
               </h3>
               <StatusPill status={agent.status} />
@@ -62,7 +62,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl bg-gray-50 px-3 py-2.5">
+          <div className="rounded-xl bg-orange-100 px-3 py-2.5">
             <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
               Calls
             </p>
@@ -70,7 +70,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
               {agent.calls}
             </p>
           </div>
-          <div className="rounded-xl bg-gray-50 px-3 py-2.5">
+          <div className="rounded-xl bg-purple-100 px-3 py-2.5">
             <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
               Avg Time
             </p>

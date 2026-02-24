@@ -125,7 +125,7 @@ export default function AgentsPage() {
     </div>
 
     <Button
-     className="h-11 rounded-xl text-gray-300 bg-[#4e1c85] px-5 hover:bg-[#3b215e]"
+     className="h-11 rounded-xl text-white bg-[#4e1c85] px-5 hover:bg-[#3b215e]"
      onClick={() => setOpenCreate(true)}
     >
      <Plus className="mr-2 h-5 w-5" />

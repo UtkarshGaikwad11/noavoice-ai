@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function ActionsPage() {
   return (
-    <div className="p-10 text-white shadow-sm to-gray-100 min-h-screen">
+    <div className="p-10 text-white  min-h-screen">
 
       {/* Header */}
       <div className="flex justify-between items-start mb-12">
@@ -104,9 +104,10 @@ export default function ActionsPage() {
                     Reschedule Appointment
                   </h2>
                   <span className="inline-flex items-center gap-2 bg-green-50 text-green-600 text-xs font-medium px-3 py-1 rounded-full mt-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-full "></span>
                     Active
                   </span>
+                  
                 </div>
               </div>
             </div>
