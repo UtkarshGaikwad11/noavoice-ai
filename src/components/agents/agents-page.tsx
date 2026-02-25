@@ -10,100 +10,68 @@ import { Badge } from "@/components/ui/badge";
 import { AgentsGrid } from "@/components/agents/agents-grid";
 import { AgentsList } from "@/components/agents/agents-list";
 import { CreateAgentDialog } from "@/components/agents/create-agent-dialog";
+import { getAgentsApi } from "@/network/Api";
 
 // ---- Demo data (replace with API later)
 
 export type Agent = {
- id: string;
- name: string;
- project: string;
- status: "active" | "inactive";
- calls: number;
- avgTime: number;
- voice: string;
+  id: string;
+  name: string;
+  description?: string;
 };
 
-const AGENTS: Agent[] = [
- {
-  id: "1",
-  name: "Test Agent 2026",
-  project: "Dental_clinic",
-  status: "active",
-  calls: 0,
-  avgTime: 0,
-  voice: "Alice - Clear, Engaging Educator",
- },
- {
-  id: "2",
-  name: "Test-Agent",
-  project: "Voice_agent",
-  status: "active",
-  calls: 1,
-  avgTime: 0,
-  voice: "Alice - Clear, Engaging Educator",
- },
- {
-  id: "3",
-  name: "Noa Test Agent",
-  project: "Noavoice Information",
-  status: "active",
-  calls: 1,
-  avgTime: 0,
-  voice: "Alice - Clear, Engaging Educator",
- },
-//  {
-//   id: "4",
-//   name: "Noa Test Agent",
-//   project: "Noavoice Information",
-//   status: "active",
-//   calls: 0,
-//   avgTime: 0,
-//   voice: "Alice - Clear, Engaging Educator",
-//  },
-//  {
-//   id: "5",
-//   name: "Healthcare",
-//   project: "Clinic",
-//   status: "active",
-//   calls: 0,
-//   avgTime: 0,
-//   voice: "Alice - Clear, Engaging Educator",
-//  },
-//  {
-//   id: "6",
-//   name: "Dyme Assistant",
-//   project: "Dyme",
-//   status: "active",
-//   calls: 0,
-//   avgTime: 0,
-//   voice: "Alice - Clear, Engaging Educator",
-//  },
-//  {
-//   id: "7",
-//   name: "Noa Voice",
-//   project: "Noavoice",
-//   status: "active",
-//   calls: 0,
-//   avgTime: 0,
-//   voice: "Alice - Clear, Engaging Educator",
-//  },
-];
 
 export default function AgentsPage() {
  const [view, setView] = React.useState<"grid" | "list">("grid");
  const [query, setQuery] = React.useState("");
  const [openCreate, setOpenCreate] = React.useState(false);
+ const [agents, setAgents] = React.useState<Agent[]>([]);
+const [loading, setLoading] = React.useState(true);
 
- const filtered = React.useMemo(() => {
+const filtered = React.useMemo(() => {
   const q = query.trim().toLowerCase();
-  if (!q) return AGENTS;
-  return AGENTS.filter(
-   (a) =>
-    a.name.toLowerCase().includes(q) ||
-    a.project.toLowerCase().includes(q) ||
-    a.voice.toLowerCase().includes(q)
+  if (!q) return agents;
+
+  return agents.filter(
+    (a) =>
+      a.name.toLowerCase().includes(q) ||
+      (a.description || "").toLowerCase().includes(q)
   );
- }, [query]);
+}, [query, agents]);
+
+const fetchAgents = async () => {
+  try {
+    setLoading(true);
+
+    const res = await getAgentsApi();
+
+    console.log("API RESPONSE:", res); // already array
+
+    if (Array.isArray(res)) {
+      const formatted = res.map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        description: a.description,
+      }));
+
+      console.log("FORMATTED:", formatted);
+
+      setAgents(formatted);
+    }
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+React.useEffect(() => {
+  fetchAgents();
+}, []);
+
+if (loading) {
+  return <div className="p-5">Loading agents...</div>;
+}
 
  return (
   <div className="w-full p-5">
@@ -179,10 +147,12 @@ export default function AgentsPage() {
    {/* Count */}
    <div className="mt-6 text-sm text-muted-foreground">
     <span className="font-medium text-foreground">
-     {filtered.length}
+    {filtered.length} of {agents.length} agents
     </span>{" "}
-    of {AGENTS.length} agents
+   
    </div>
+
+   
 
    {/* Content */}
    <div className="mt-6">
@@ -198,8 +168,11 @@ export default function AgentsPage() {
     <Badge className="bg-[#4e1c85]">theme</Badge>
    </div>
 
-   <CreateAgentDialog open={openCreate} onOpenChange={setOpenCreate} />
-
+   <CreateAgentDialog
+  open={openCreate}
+  onOpenChange={setOpenCreate}
+  onSuccess={fetchAgents}
+/>
   </div>
 
 

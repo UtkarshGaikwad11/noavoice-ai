@@ -22,9 +22,10 @@ import { createAgentApi } from "@/network/Api";
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 };
 
-export function CreateAgentDialog({ open, onOpenChange }: Props) {
+export function CreateAgentDialog({ open, onOpenChange, onSuccess }: Props) {
   const router = useRouter();
 
   const [name, setName] = React.useState("");
@@ -32,6 +33,7 @@ export function CreateAgentDialog({ open, onOpenChange }: Props) {
   const [loading, setLoading] = React.useState(false);
 
   function close() {
+    onSuccess?.();   
     onOpenChange(false);
   }
 
@@ -55,8 +57,7 @@ export function CreateAgentDialog({ open, onOpenChange }: Props) {
       // Close dialog
       close();
 
-      // Refresh agents page
-      router.refresh();
+    
 
     } catch (error: any) {
       console.error("CREATE ERROR:", error);

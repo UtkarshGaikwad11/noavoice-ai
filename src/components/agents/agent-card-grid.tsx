@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Phone, Settings } from "lucide-react";
 import Link from "next/link";
 
-function StatusPill({ status }: { status: Agent["status"] }) {
+function StatusPill({ status }: { status: ["status"] }) {
   const active = status === "active";
   return (
     <span
@@ -44,7 +44,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
               <StatusPill status={agent.status} />
             </div>
             <p className="mt-1 truncate text-[12px] text-gray-400">
-              {agent.project}
+              no description available
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
               Calls
             </p>
             <p className="mt-1 text-lg font-bold leading-none text-gray-800">
-              {agent.calls}
+              0
             </p>
           </div>
           <div className="rounded-xl bg-purple-100 px-3 py-2.5">
@@ -75,7 +75,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
               Avg Time
             </p>
             <p className="mt-1 text-lg font-bold leading-none text-gray-800">
-              {agent.avgTime}
+              0
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function AgentCardGrid({ agent }: { agent: Agent }) {
               Voice
             </p>
             <p className="mt-0.5 truncate text-[13px] font-semibold text-gray-700">
-              {agent.voice}
+              Default
             </p>
           </div>
 
