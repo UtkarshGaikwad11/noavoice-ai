@@ -3,13 +3,27 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { LoginForm } from "@/components/login-form";
 import { LogoutConfirm } from "@/components/logout-confirm"
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LoginPage() {
+  const router=useRouter()
 
  const handleGoogleLogin = () => {
   window.location.href =
     `${process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL}/auth/google`;
+    // router.push("/agents")
 };
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search); 
+  const token = params.get("token");
+
+  if (token) {
+    localStorage.setItem("access_token", token);
+  }
+}, []);
+
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">

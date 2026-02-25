@@ -5,12 +5,12 @@ import { ENDPOINTS } from "./Endpoints";
    AGENTS APIs
 ================================= */
 
-// 🔹 GET all agents
+//  GET all agents
 export const getAgentsApi = async () => {
   return ApiClient.get(ENDPOINTS.GET_AGENTS);
 };
 
-// 🔹 CREATE new agent
+//  CREATE new agent
 export const createAgentApi = async (data: {
   name: string;
   description: string;
