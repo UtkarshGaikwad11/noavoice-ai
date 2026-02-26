@@ -24,6 +24,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 import {
   Select,
@@ -33,9 +41,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { getAgentByIdApi } from "@/network/Api";
-
-import { cn } from "@/lib/utils";
+import { getAgentByIdApi, deleteAgentApi } from "@/network/Api";
+import { updateAgentApi } from "@/network/Api";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const THEME = {
   primary: "#4e1c85",
@@ -58,7 +67,13 @@ const VOICES = [
   "David - Calm Support",
 ];
 
-function PageHeader({ agentName }: { agentName: string }) {
+function PageHeader({
+  agentName,
+  onDelete,
+}: {
+  agentName: string;
+  onDelete: () => void;
+}) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex items-start gap-4">
@@ -80,8 +95,8 @@ function PageHeader({ agentName }: { agentName: string }) {
       </div>
 
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <Button className="h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700">
-          <Phone className="mr-2 h-4 w-4" />
+        <Button className="h-11 rounded-md bg-emerald-600 hover:bg-emerald-700">
+          <Phone className="mr-1 h-4 w-4" />
           {agentName}
         </Button>
 
@@ -93,7 +108,11 @@ function PageHeader({ agentName }: { agentName: string }) {
           Publish
         </Button> */}
 
-        <Button variant="destructive" className="h-11 rounded-xl">
+        <Button
+          variant="destructive"
+          onClick={onDelete}
+          className="h-11 rounded-md"
+        >
           <Trash2 className="mr-2 h-4 w-4" />
           Delete
         </Button>
@@ -162,27 +181,82 @@ export default function AgentDetailPage({ id }: { id: string }) {
   } | null>(null);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    if (!id) return; // guard
+  const router = useRouter();
+
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [updating, setUpdating] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+
+  const handleDelete = async () => {
+    if (!id) return;
+
+    try {
+      setDeleting(true);
+
+      await deleteAgentApi(id);
+
+      router.push("/agents");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete agent");
+    } finally {
+      setDeleting(false);
+      setDeleteOpen(false); // close dialog
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!id) return;
+
+    try {
+      setUpdating(true);
+
+      console.log("UPDATING:", { name, description });
+
+      await updateAgentApi(id, {
+        name,
+        description,
+      });
+
+      router.push("/agents");
+
+    } catch (err) {
+      console.error("UPDATE ERROR:", err);
+      alert("Failed to update agent");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const fetchAgent = async () => {
+    try {
+      setLoading(true);
+
+      console.log("CALLING API WITH ID:", id);
+
+      const res: any = await getAgentByIdApi(id);
+
+      console.log("DETAIL API:", res.data);
+
+      const assistant = res?.data?.assistant;
+
+      setAgent(assistant);
+      setName(assistant?.name || "");
+      setDescription(assistant?.description || "");
+
+    } catch (err) {
+      console.error("DETAIL ERROR:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) return;
     console.log("ID RECEIVED:", id);
-    const fetchAgent = async () => {
-      try {
-        setLoading(true);
 
-        console.log("CALLING API WITH ID:", id);
-
-        const res:any = await getAgentByIdApi(id);
-
-        console.log("DETAIL API:", res);
-
-        setAgent(res); 
-
-      } catch (err) {
-        console.error("DETAIL ERROR:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchAgent();
   }, [id]);
@@ -197,7 +271,10 @@ export default function AgentDetailPage({ id }: { id: string }) {
 
   return (
     <div className="w-full space-y-6 p-5">
-      <PageHeader agentName={agent.name} />
+      <PageHeader
+        agentName={agent.name}
+        onDelete={() => setDeleteOpen(true)}
+      />
 
       <Card className="rounded-2xl border bg-white shadow-sm">
         {/* Agent header inside card */}
@@ -230,13 +307,20 @@ export default function AgentDetailPage({ id }: { id: string }) {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-sm">Agent Name</Label>
-                <Input defaultValue={agent.name} className="h-11 rounded-xl" />
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-11 rounded-xl"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm">Agent Role / Nickname</Label>
-                <Input defaultValue={agent.description || ""} className="h-11 rounded-xl" />
-              </div>
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="h-11 rounded-xl"
+                />              </div>
             </div>
 
             <InfoRow
@@ -370,13 +454,44 @@ export default function AgentDetailPage({ id }: { id: string }) {
       {/* Bottom bar (UI only) */}
       <div className="sticky bottom-4 flex justify-end">
         <Button
-          className="h-12 rounded-xl px-6"
+          onClick={handleUpdate}
+          disabled={updating}
+          className="h-12 rounded-md px-6"
           style={{ background: THEME.primary }}
         >
           <Save className="mr-2 h-5 w-5" />
-          Publish Changes
+          {updating ? "Saving..." : "Publish Changes"}
         </Button>
       </div>
+
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogDescription>
+              This will permanently delete{" "}
+              <b>{agent.name}</b>. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex gap-2 sm:justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteOpen(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Yes, Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

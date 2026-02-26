@@ -22,7 +22,7 @@ export default function AgentLayout({
   return (
     <div className="flex w-full">
       <AgentConfigSidebar />
-      <div className="flex-1 p-6">
+      <div className="flex-1">
         {children}
       </div>
     </div>
