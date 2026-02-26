@@ -50,7 +50,7 @@ const MENU_ITEMS = [
   { title: "Phone Numbers", href: "/phone-numbers", icon: Phone },
   { title: "Providers", href: "/providers", icon: Server },
   { title: "Services", href: "/services", icon: Wrench },
-  { title: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
+  { title: "Knowledge Base", href: "/knowledgebase", icon: BookOpen },
   { title: "Integrations", href: "/integrations", icon: Plug },
   { title: "Actions", href: "/actions", icon: Zap },
 ] as const;
