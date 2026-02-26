@@ -33,6 +33,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { getAgentByIdApi } from "@/network/Api";
+
 import { cn } from "@/lib/utils";
 
 const THEME = {
@@ -153,11 +155,49 @@ function InfoRow({
 
 export default function AgentDetailPage({ id }: { id: string }) {
   // UI-only demo values
-  const agentName = "abc";
+  const [agent, setAgent] = React.useState<{
+    id: string;
+    name: string;
+    description?: string;
+  } | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!id) return; // guard
+    console.log("ID RECEIVED:", id);
+    const fetchAgent = async () => {
+      try {
+        setLoading(true);
+
+        console.log("CALLING API WITH ID:", id);
+
+        const res:any = await getAgentByIdApi(id);
+
+        console.log("DETAIL API:", res);
+
+        setAgent(res); 
+
+      } catch (err) {
+        console.error("DETAIL ERROR:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgent();
+  }, [id]);
+
+  if (loading) {
+    return <div className="p-5">Loading agent...</div>;
+  }
+
+  if (!agent) {
+    return <div className="p-5">Agent not found</div>;
+  }
 
   return (
     <div className="w-full space-y-6 p-5">
-      <PageHeader agentName={agentName} />
+      <PageHeader agentName={agent.name} />
 
       <Card className="rounded-2xl border bg-white shadow-sm">
         {/* Agent header inside card */}
@@ -167,7 +207,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
               <Bot className="h-7 w-7" />
             </div>
             <div>
-              <div className="text-2xl font-bold">{agentName}</div>
+              <div className="text-2xl font-bold">{agent.name}</div>
               <div className="text-sm text-muted-foreground">
                 Give your assistant a unique name
               </div>
@@ -190,12 +230,12 @@ export default function AgentDetailPage({ id }: { id: string }) {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-sm">Agent Name</Label>
-                <Input defaultValue={agentName} className="h-11 rounded-xl" />
+                <Input defaultValue={agent.name} className="h-11 rounded-xl" />
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm">Agent Role / Nickname</Label>
-                <Input defaultValue="test1111" className="h-11 rounded-xl" />
+                <Input defaultValue={agent.description || ""} className="h-11 rounded-xl" />
               </div>
             </div>
 

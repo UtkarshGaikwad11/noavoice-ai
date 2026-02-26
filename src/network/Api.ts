@@ -23,3 +23,8 @@ export const createAgentApi = async (data: {
 //   return getRequest(ENDPOINTS.GET_AGENTS);
 // };
 
+//  GET agent by ID
+export const getAgentByIdApi = async (id: string) => {
+  return ApiClient.get(ENDPOINTS.GET_AGENT_BY_ID + id);
+};
+

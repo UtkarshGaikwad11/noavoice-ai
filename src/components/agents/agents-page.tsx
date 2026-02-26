@@ -18,6 +18,11 @@ export type Agent = {
   id: string;
   name: string;
   description?: string;
+  project?: string;
+  status?: "active" | "inactive";
+  calls?: number;
+  avgTime?: number;
+  voice?: string;
 };
 
 
