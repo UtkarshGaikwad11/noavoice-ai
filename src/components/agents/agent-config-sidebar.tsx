@@ -1,8 +1,6 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import {
   Settings,
   MessageSquare,
@@ -10,116 +8,68 @@ import {
   Server,
   Zap,
   BookOpen,
-} from "lucide-react"
+} from "lucide-react";
 
 const MENU = [
-  {
-    title: "Configure",
-    description: "Basic setup & voice settings",
-    href: "",
-    icon: Settings,
-  },
-  {
-    title: "Prompt",
-    description: "Define behavior & responses",
-    href: "prompt",
-    icon: MessageSquare,
-  },
-  {
-    title: "Phone Number",
-    description: "Configure phone settings",
-    href: "phone",
-    icon: Phone,
-  },
-  {
-    title: "Providers",
-    description: "Select AI & voice providers",
-    href: "providers",
-    icon: Server,
-  },
-  {
-    title: "Actions",
-    description: "Set up automated tasks",
-    href: "actions",
-    icon: Zap,
-  },
-  {
-    title: "Knowledge Base",
-    description: "Configure knowledge base",
-    href: "knowledge",
-    icon: BookOpen,
-  },
-]
+  { key: "configure", title: "Configure", icon: Settings },
+  { key: "prompt", title: "Prompt", icon: MessageSquare },
+  { key: "phone", title: "Phone Number", icon: Phone },
+  { key: "providers", title: "Providers", icon: Server },
+  { key: "actions", title: "Actions", icon: Zap },
+  { key: "knowledge", title: "Knowledge Base", icon: BookOpen },
+];
 
-export default function AgentConfigSidebar() {
-  const pathname = usePathname()
-
+export default function AgentConfigSidebar({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: string;
+  setActiveTab: (val: string) => void;
+}) {
   return (
-    <div className="w-[280px] min-h-svh border-r bg-purple-50 ">
-      
-      {/* Header */}
-      <div className="border-b">
-      <div className="px-6 pt-6 pb-5">
-        <h2 className="text-2xl font-semibold">test12</h2>
-        <p className="text-sm text-muted-foreground mt-1 ">
-          Complete all steps to create your assistant
-        </p>
-      </div>
-      </div>
+    <div className="w-[280px] h-screen py-3 bg-gray-100">
+      <div className="h-full rounded-[22px] border bg-white shadow-sm flex flex-col">
+        
+        <div className="px-5 pt-5 border-b pb-4" >
+          <h2 className="text-xl font-semibold text-gray-900">
+            Test12
+          </h2>
+          <p className="text-sm text-gray-500">
+            Complete all steps to create your assistant
+          </p>
+        </div>
 
-      {/* Menu */}
-      <div className="mt-6 px-3 py-4 space-y-2">
-        {MENU.map((item) => {
-          const fullHref = `/agents/1/${item.href}`
-          const isActive =
-            pathname === fullHref ||
-            pathname?.startsWith(fullHref + "/")
+        <div className="flex-1 px-2 py-4 space-y-2">
+          {MENU.map((item) => {
+            const isActive = activeTab === item.key;
+            const Icon = item.icon;
 
-          const Icon = item.icon
-
-          return (
-            <Link
-              key={item.title}
-              href={fullHref}
-              className={cn(
-                "flex items-start gap-4 rounded-2xl p tx-3 py-3 ransition-all",
-                isActive
-                  ? "bg-purple-100"
-                  : "hover:bg-gray-100"
-              )}
-            >
-              {/* Icon Box */}
-              <div
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveTab(item.key)}
                 className={cn(
-                  "flex h-10 w-10 border-b items-center justify-center rounded-2xl",
-                  isActive
-                    ? "bg-purple-600 text-white"
-                    : "bg-white text-gray-500"
+                  "w-full flex items-center gap-3 rounded-2xl px-3 py-3",
+                  isActive ? "bg-purple-100" : "hover:bg-gray-100"
                 )}
               >
-                <Icon className="h-5 w-5" />
-              </div>
-
-              {/* Text */}
-              <div>
-                <p
+                <div
                   className={cn(
-                    "text-md font-medium",
+                    "flex h-10 w-10 items-center justify-center rounded-xl",
                     isActive
-                      ? "text-purple-700"
-                      : "text-gray-900"
+                      ? "bg-purple-600 text-white"
+                      : "bg-gray-100 text-gray-600"
                   )}
                 >
-                  {item.title}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {item.description}
-                </p>
-              </div>
-            </Link>
-          )
-        })}
+                  <Icon className="h-5 w-5" />
+                </div>
+
+                <p className="text-sm font-medium ">{item.title}</p>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
-  )
+  );
 }

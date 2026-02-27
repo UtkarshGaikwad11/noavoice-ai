@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
-import AgentConfigSidebar from "@/components/agents/agent-config-sidebar";
 
 export default function AgentLayout({
   children,
@@ -13,18 +12,12 @@ export default function AgentLayout({
 
   useEffect(() => {
     setOpen(false);
-
-    return () => {
-      setOpen(true);
-    };
+    return () => setOpen(true);
   }, [setOpen]);
 
   return (
-    <div className="flex w-full">
-      <AgentConfigSidebar />
-      <div className="flex-1">
-        {children}
-      </div>
+    <div className="h-screen w-full overflow-hidden">
+      {children}
     </div>
   );
 }

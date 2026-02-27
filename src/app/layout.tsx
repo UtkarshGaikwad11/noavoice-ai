@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/App-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -23,7 +24,7 @@ export default function RootLayout({
             children
           ) : (
             <SidebarProvider defaultOpen={true}>
-              <div className="flex w-full">
+              <div className="flex w-full bg-gray-100">
                 <AppSidebar />
                 <SidebarInset className="flex-1">
                   {children}
@@ -32,6 +33,7 @@ export default function RootLayout({
             </SidebarProvider>
           )}
         </TooltipProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

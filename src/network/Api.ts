@@ -41,3 +41,26 @@ export const updateAgentApi = async (id: string, data: {
 export const deleteAgentApi = async (id: string) => {
   return ApiClient.delete(ENDPOINTS.DELETE_AGENT + id);
 };
+
+/* ===============================
+   PROMPTS APIs
+================================= */    
+//  GET prompt by ID
+export const getPromptByIdApi = async (id: string) => {
+  return ApiClient.get(ENDPOINTS.GET_PROMPT_BY_ID + `/${id}/prompt`);
+};
+
+//  UPDATE prompt by ID
+export const updatePromptApi = async (id: string, data: {
+  first_message?: string; 
+  system_prompt?: string;
+  end_call_message?: string;
+}) => {
+  return ApiClient.put(ENDPOINTS.UPDATE_PROMPT + `/${id}/prompt`, data);
+};
+
+
+//  DELETE prompt by ID
+export const deletePromptApi = async (id: string) => {
+  return ApiClient.delete(ENDPOINTS.DELETE_PROMPT + `/${id}/prompt`);
+};

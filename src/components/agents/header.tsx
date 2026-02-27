@@ -18,11 +18,11 @@ export function PageHeader({
   extraActions,
 }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-8 p-5 border-b border-gray-200">
+    <div className="flex items-center justify-between mb-8 p-5 ">
       
       {/* Left */}
       <div>
-        <h1 className="text-2xl font-semibold">{title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[#2b1246]">{title}</h1>
         {description && (
           <p className="text-sm text-muted-foreground">
             {description}

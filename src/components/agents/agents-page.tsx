@@ -79,7 +79,7 @@ export default function AgentsPage() {
   }
 
   return (
-    <div className="w-full p-5">
+    <div className="w-full p-5 bg-gray-100 min-h-screen">
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
