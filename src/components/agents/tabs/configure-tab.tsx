@@ -15,6 +15,7 @@ import {
   Mic,
   Play,
   Sparkles,
+  Pause,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,14 +25,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 
 import {
   Select,
@@ -41,11 +34,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { getAgentByIdApi, deleteAgentApi } from "@/network/Api";
-import { updateAgentApi } from "@/network/Api";
+import { getAgentByIdApi, deleteAgentApi, getVoicesApi, updateAgentApi, updateVoiceApi } from "@/network/Api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import DeleteConfirmDialog from "@/components/common/delete-confirm-dialog";
+import { toast } from "sonner";
 
 const THEME = {
   primary: "#4e1c85",
@@ -74,6 +67,7 @@ function PageHeader({
 }: {
   agentName: string;
   onDelete: () => void;
+  onPublish?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -100,14 +94,6 @@ function PageHeader({
           <Phone className="mr-1 h-4 w-4" />
           {agentName}
         </Button>
-
-        {/* <Button
-          className="h-11 rounded-xl"
-          style={{ background: THEME.primary }}
-        >
-          <Save className="mr-2 h-4 w-4" />
-          Publish
-        </Button> */}
 
         <Button
           variant="destructive"
@@ -189,6 +175,12 @@ export default function AgentDetailPage({ id }: { id: string }) {
   const [updating, setUpdating] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [voices, setVoices] = React.useState<any[]>([]);
+  const [selectedVoice, setSelectedVoice] = React.useState("");
+  const getGender = (voice: any) => voice?.labels?.gender || "unknown";
+  const getLanguage = (voice: any) => voice?.labels?.language || "en";
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const [playingId, setPlayingId] = React.useState<string | null>(null);
 
   const handleDelete = async () => {
     if (!id) return;
@@ -201,7 +193,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
       router.push("/agents");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete agent");
+      toast.error("Failed to delete agent");
     } finally {
       setDeleting(false);
       setDeleteOpen(false); // close dialog
@@ -214,18 +206,35 @@ export default function AgentDetailPage({ id }: { id: string }) {
     try {
       setUpdating(true);
 
-      console.log("UPDATING:", { name, description });
-
+      // 1️⃣ Update agent basic info
       await updateAgentApi(id, {
         name,
         description,
       });
 
-      router.push("/agents");
+      // 2️⃣ Update voice (IMPORTANT)
+      if (selectedVoice) {
+        const selectedVoiceObj = voices.find(
+          (v) => v.voice_id === selectedVoice
+        );
+
+        if (!selectedVoiceObj) return;
+
+        await updateVoiceApi(id, {
+          provider: "elevenlabs",
+          voice_id: selectedVoiceObj.voice_id,
+          voice_name: selectedVoiceObj.name,
+          language: selectedVoiceObj.labels?.language || "en",
+          multi_lingual: false, // or derive later
+        });
+      }
+
+      // Optional: success UI
+      console.log("Agent + Voice updated");
 
     } catch (err) {
       console.error("UPDATE ERROR:", err);
-      alert("Failed to update agent");
+      toast.error("Failed to update agent");
     } finally {
       setUpdating(false);
     }
@@ -246,6 +255,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
       setAgent(assistant);
       setName(assistant?.name || "");
       setDescription(assistant?.description || "");
+      setSelectedVoice(assistant?.voice_id || "");
 
     } catch (err) {
       console.error("DETAIL ERROR:", err);
@@ -254,12 +264,51 @@ export default function AgentDetailPage({ id }: { id: string }) {
     }
   };
 
+  const fetchVoices = async () => {
+    try {
+      const res: any = await getVoicesApi(id);
+
+      const voiceList = res?.data?.voices || res?.voices || [];
+
+      setVoices(voiceList);
+    } catch (err) {
+      console.error("VOICE ERROR:", err);
+    }
+  };
+
+  const handlePlayVoice = (voice: any) => {
+    if (!voice?.preview_url) return;
+
+    // stop previous audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    // if clicking same voice → stop
+    if (playingId === voice.voice_id) {
+      setPlayingId(null);
+      return;
+    }
+
+    const audio = new Audio(voice.preview_url);
+    audioRef.current = audio;
+
+    setPlayingId(voice.voice_id);
+
+    audio.play();
+
+    audio.onended = () => {
+      setPlayingId(null);
+    };
+  };
+
   useEffect(() => {
     if (!id) return;
     console.log("ID RECEIVED:", id);
 
-
     fetchAgent();
+    fetchVoices();
   }, [id]);
 
   if (loading) {
@@ -275,6 +324,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
       <PageHeader
         agentName={agent.name}
         onDelete={() => setDeleteOpen(true)}
+        onPublish={handleUpdate}   // ✅ ADD THIS
       />
 
       <Card className="rounded-2xl border bg-white shadow-sm">
@@ -292,8 +342,9 @@ export default function AgentDetailPage({ id }: { id: string }) {
             </div>
           </div>
 
-          <Badge className="w-fit rounded-full bg-emerald-500 px-3 py-1 text-white hover:bg-emerald-500">
-            Active
+          <Badge className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 leading-none">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="flex items-center">Active</span>
           </Badge>
         </div>
 
@@ -311,7 +362,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-sm"
                 />
               </div>
 
@@ -320,7 +371,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-sm"
                 />              </div>
             </div>
 
@@ -334,7 +385,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
             <div className="space-y-2">
               <Label className="text-sm">Timezone</Label>
               <Select defaultValue={TIMEZONES[0]}>
-                <SelectTrigger className="h-11 rounded-xl">
+                <SelectTrigger className="h-11 rounded-sm w-full">
                   <SelectValue placeholder="Select timezone" />
                 </SelectTrigger>
                 <SelectContent>
@@ -376,7 +427,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
                 <Label className="text-sm">Voice Selection</Label>
 
                 {/* UI only: preset mode shown */}
-                <div className="flex flex-col gap-3 rounded-2xl border bg-muted/10 p-4">
+                <div className="flex flex-col gap-3 rounded-sm border bg-muted/10 p-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <label className="flex items-center gap-2 text-sm">
                       <input type="radio" name="voiceMode" defaultChecked />
@@ -390,26 +441,78 @@ export default function AgentDetailPage({ id }: { id: string }) {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Select defaultValue={VOICES[0]}>
-                      <SelectTrigger className="h-11 w-full rounded-sm ">
-                        <SelectValue placeholder="Select voice" />
+                    <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+                      <SelectTrigger className="h-11 w-full rounded-sm">
+                        <SelectValue>
+                          {voices.find(v => v.voice_id === selectedVoice)?.name || "Select voice"}
+                        </SelectValue>
                       </SelectTrigger>
-                      <SelectContent>
-                        {VOICES.map((v) => (
-                          <SelectItem key={v} value={v}>
-                            {v}
-                          </SelectItem>
-                        ))}
+
+                      <SelectContent className="w-[var(--radix-select-trigger-width)] max-h-[360px] overflow-y-auto p-2">
+                        {voices.map((voice) => {
+                          const gender = voice?.labels?.gender;
+                          const language = voice?.labels?.accent || voice?.labels?.language;
+                          const style = voice?.labels?.descriptive;
+
+                          return (
+                            <SelectItem
+                              key={voice.voice_id}
+                              value={voice.voice_id}
+                              className="p-0 focus:bg-transparent"
+                            >
+                              <div className="w-full rounded-sm px-4 py-3 hover:bg-gray-50 transition cursor-pointer space-y-1">
+
+                                {/* Voice Name */}
+                                <div className="text-md font-semibold text-gray-800 pb-2">
+                                  {voice.name}
+                                </div>
+
+                                {/* Badges */}
+                                <div className="flex flex-wrap gap-2 pb-1">
+                                  {gender && (
+                                    <span className="text-[11px] px-2 py-[4px] rounded-sm bg-purple-100 text-purple-700">
+                                      {gender}
+                                    </span>
+                                  )}
+                                  {language && (
+                                    <span className="text-[11px] px-2 py-[2px] rounded-md bg-blue-100 text-blue-700">
+                                      {language}
+                                    </span>
+                                  )}
+                                  {style && (
+                                    <span className="text-[11px] px-2 py-[2px] rounded-md bg-pink-100 text-pink-700">
+                                      {style}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Description */}
+                                {voice.description && (
+                                  <p className="text-xs text-gray-500 leading-snug">
+                                    {voice.description}
+                                  </p>
+                                )}
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
 
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-11 w-11 rounded-xl px-0 bg-purple-100 hover:bg-purple-200 text-purple-600"
-                      title="Preview"
+                      onClick={() => {
+                        const voice = voices.find(v => v.voice_id === selectedVoice);
+                        if (voice) handlePlayVoice(voice);
+                      }}
+                      className="h-11 w-11 rounded-xl px-0 bg-purple-100 hover:bg-purple-200 text-purple-600 hover:text-purple-700"
                     >
-                      <Play className="h-5 w-5" />
+                      {playingId === selectedVoice ? (
+                        <Pause className="h-5 w-5" />
+                      ) : (
+                        <Play className="h-5 w-5" />
+                      )}
                     </Button>
                   </div>
 
@@ -464,7 +567,7 @@ export default function AgentDetailPage({ id }: { id: string }) {
           {updating ? "Saving..." : "Publish Changes"}
         </Button>
       </div>
-      
+
       <DeleteConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
