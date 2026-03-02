@@ -32,7 +32,8 @@ export const getAgentByIdApi = async (id: string) => {
 //  UPDATE agent by ID
 export const updateAgentApi = async (id: string, data: {
   name?: string;
-  description?: string; 
+  description?: string;
+  voice_id?: string;
 }) => {
   return ApiClient.put(ENDPOINTS.UPDATE_AGENT + id, data);
 };
@@ -44,7 +45,7 @@ export const deleteAgentApi = async (id: string) => {
 
 /* ===============================
    PROMPTS APIs
-================================= */    
+================================= */
 //  GET prompt by ID
 export const getPromptByIdApi = async (id: string) => {
   return ApiClient.get(ENDPOINTS.GET_PROMPT_BY_ID + `/${id}/prompt`);
@@ -52,7 +53,7 @@ export const getPromptByIdApi = async (id: string) => {
 
 //  UPDATE prompt by ID
 export const updatePromptApi = async (id: string, data: {
-  first_message?: string; 
+  first_message?: string;
   system_prompt?: string;
   end_call_message?: string;
 }) => {
@@ -65,7 +66,29 @@ export const deletePromptApi = async (id: string) => {
   return ApiClient.delete(ENDPOINTS.DELETE_PROMPT + `/${id}/prompt`);
 };
 
+/* ===============================
+   CONFIG APIs
+================================= */
+//  GET available voices
+export const getVoicesApi = async (id: string) => {
+  return ApiClient.get(ENDPOINTS.GET_VOICES + `/${id}/voices`);
+};
 
+//  UPDATE selected voice
+export const updateVoiceApi = async (
+  id: string,
+  voice: any
+) => {
+  return ApiClient.put(
+    ENDPOINTS.UPDATE_VOICE + `/${id}`,
+    {
+      voice,
+      settings: {
+        recording_enabled: false, // or your state later
+      },
+    }
+  );
+};
 
 /* ===============================
    KNOWLEDGE BASE APIs
