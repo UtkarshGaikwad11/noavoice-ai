@@ -103,13 +103,17 @@ export default function PromptPage() {
       <PageHeader
         title="Define Assistant Behavior"
         description="Configure how your assistant should respond and behave"
+        onPublish={handleUpdate}
+        onDelete={() => setDeleteOpen(true)}
+        publishing={updating}
+        deleting={deleting}
       />
 
       <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-8 max-w-5xl mx-auto">
 
         {/* First Message */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">First Message</label>
+          <label className="text-sm font-medium ">First Message</label>
           <Input
             value={firstMessage}
             onChange={(e) => setFirstMessage(e.target.value)}
@@ -139,28 +143,6 @@ export default function PromptPage() {
           />
         </div>
 
-        {/* ACTION BUTTONS */}
-        <div className="flex justify-between pt-4">
-
-          {/* DELETE */}
-          <Button
-            variant="destructive"
-            onClick={() => setDeleteOpen(true)}
-            disabled={deleting}
-            className="rounded-md"
-          >
-            Delete
-          </Button>
-
-          {/* UPDATE */}
-          <Button
-            onClick={handleUpdate}
-            disabled={updating}
-            className="bg-purple-700 hover:bg-purple-800 text-white rounded-md"
-          >
-            {updating ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
       </div>
 
       <DeleteConfirmDialog
