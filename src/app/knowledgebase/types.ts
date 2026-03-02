@@ -4,9 +4,10 @@ export interface KnowledgeDocument {
   id: string
   name: string
   type: string
-  size: number
+  size: string
   addedAt: string
-  status: DocumentStatus
+  status: string
+  content?: string
 }
 
 export interface KnowledgeStats {

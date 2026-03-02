@@ -74,9 +74,9 @@ export default function AgentsPage() {
     fetchAgents();
   }, []);
 
-  if (loading) {
-    return <div className="p-5">Loading agents...</div>;
-  }
+  // if (loading) {
+  //   return <div className="p-5">Loading agents...</div>;
+  // }
 
   return (
     <div className="w-full p-5 bg-gray-100 min-h-screen">

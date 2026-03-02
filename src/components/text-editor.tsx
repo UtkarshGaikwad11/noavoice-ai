@@ -1,37 +1,38 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { Bold, Italic, List, ListOrdered } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect } from "react"
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { Bold, Italic, List, ListOrdered } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+interface TextEditorProps {
+  value: string
+  onChange: (value: string) => void
+}
 
 export default function TextEditor({
   value,
   onChange,
-}: {
-  value: string;
-  onChange: (val: string) => void;
-}) {
+}: TextEditorProps) {
+
   const editor = useEditor({
     extensions: [StarterKit],
-    content: value || "<p>Write your system prompt here...</p>",
+    content: value,
     immediatelyRender: false,
-
-    // ✅ update parent when editor changes
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange(editor.getHTML())
     },
-  });
+  })
 
-  // ✅ IMPORTANT: update editor when API data comes
+  //  Important: When parent value changes, update editor
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || "");
+      editor.commands.setContent(value)
     }
-  }, [value, editor]);
+  }, [value, editor])
 
-  if (!editor) return null;
+  if (!editor) return null
 
   return (
     <div className="border rounded-xl bg-white flex flex-col">
@@ -77,5 +78,5 @@ export default function TextEditor({
         className="tiptap-editor p-4 min-h-[350px] flex-1 focus:outline-none"
       />
     </div>
-  );
+  )
 }

@@ -59,18 +59,17 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("access_token")
 
       if (token) {
-        config.headers = config.headers || {};
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`
       }
     }
 
-    return config;
+    return config
   },
   (error) => Promise.reject(error)
-);
+)
 
 axiosClient.interceptors.response.use(
   (response) => response.data,

@@ -64,3 +64,50 @@ export const updatePromptApi = async (id: string, data: {
 export const deletePromptApi = async (id: string) => {
   return ApiClient.delete(ENDPOINTS.DELETE_PROMPT + `/${id}/prompt`);
 };
+
+
+
+/* ===============================
+   KNOWLEDGE BASE APIs
+================================= */  
+//  UPLOAD knowledge document
+export const uploadKnowledgeApi = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return ApiClient.post(ENDPOINTS.UPLOAD_KNOWLEDGE, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+  
+//delete knowledge document by ID
+export const deleteKnowledgeDocumentApi = async (fileId: string) => {
+  return ApiClient.delete(`/knowledge/${fileId}`);
+}
+
+// GET knowledge list
+export const getKnowledgeListApi = async (params?: {
+  search?: string;
+  sort_by?: string;
+  order?: string;
+  limit?: number;
+  offset?: number;
+}) => {
+  return ApiClient.get(ENDPOINTS.GET_KNOWLEDGE_LIST, {
+    params: {
+      search: params?.search || "",
+      sort_by: params?.sort_by || "created_at",
+      order: params?.order || "desc",
+      limit: params?.limit || 10,
+      offset: params?.offset || 0,
+    },
+  });
+};
+
+//phone numbers api
+export const getPhoneNumbersApi = async () => {
+  return ApiClient.get("/phone_numbers");
+}
