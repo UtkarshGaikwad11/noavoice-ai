@@ -10,9 +10,12 @@ export const ENDPOINTS = {
   UPDATE_PROMPT: "/agents", 
   DELETE_PROMPT: "/agents",
 
+  GET_VOICES: "/configure",
+  UPDATE_VOICE: "/configure",
 
-  UPLOAD_KNOWLEDGE: "/knowledge/upload",
+   UPLOAD_KNOWLEDGE: "/knowledge/upload",
   DELETE_KNOWLEDGE: "/knowledge/", // + id
   GET_KNOWLEDGE_LIST: "/knowledge",
 
-}
+  
+} 
